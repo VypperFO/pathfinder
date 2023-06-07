@@ -1,0 +1,12 @@
+<table (mousedown)="startPainting()" (mouseup)="stopPainting()">
+  <tbody>
+    <tr *ngFor="let row of rows">
+      <td
+        *ngFor="let column of columns"
+        class="unvisited"
+        id="{{ row }}-{{ column }}"
+        (mouseover)="paint($event)"
+      ></td>
+    </tr>
+  </tbody>
+</table>
