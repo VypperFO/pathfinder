@@ -1,0 +1,26 @@
+nav {
+    padding: 10px;
+    background-color: rgb(12, 53, 71);
+    color: #fff
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    display: inline;
+    margin-right: 30px;
+}
+
+nav li p,
+h1,
+button {
+    display: inline;
+}
+
+nav li button:hover {
+    cursor: pointer;
+}

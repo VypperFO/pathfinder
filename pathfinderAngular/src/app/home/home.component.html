@@ -1,3 +1,20 @@
+<nav>
+  <ul>
+    <li><h1>Pathfinder Visualizer</h1></li>
+    <li><p>Algorithms</p></li>
+    <li><button mat-raised-button>Visualize</button></li>
+    <li>
+      <button mat-raised-button color="primary" (click)="clearBoard()">
+        Clear board
+      </button>
+    </li>
+    <li>
+      <button mat-raised-button (click)="gridTableComponent.maze()">
+        Maze
+      </button>
+    </li>
+  </ul>
+</nav>
 <div style="text-align: center">
   <h1>Legend of cells:</h1>
 </div>

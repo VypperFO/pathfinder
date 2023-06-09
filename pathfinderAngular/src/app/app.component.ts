@@ -6,14 +6,4 @@ import { GridTableComponent } from './grid-table/grid-table.component';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements AfterViewInit {
-  @ViewChild(GridTableComponent) gridTableComponent!: GridTableComponent;
-  
-  ngAfterViewInit() {
-    // no specific code is needed
-  }
-
-  clearBoard(){
-    this.gridTableComponent.clearCells();
-  }  
-}
+export class AppComponent {}

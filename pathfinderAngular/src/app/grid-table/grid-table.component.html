@@ -3,9 +3,10 @@
     <tr *ngFor="let row of rows">
       <td
         *ngFor="let column of columns"
-        class="unvisited"
+        class="cell unvisited"
         id="{{ row }}-{{ column }}"
         (mouseover)="paint($event)"
+        (click)="algorithms()"
       ></td>
     </tr>
   </tbody>
