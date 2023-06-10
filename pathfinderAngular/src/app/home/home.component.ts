@@ -5,6 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-home',
@@ -16,16 +18,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
+    MatSelectModule,
+    MatFormFieldModule,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent {
+  selected = 'dijkstra';
   @ViewChild(GridTableComponent) gridTableComponent!: GridTableComponent;
-
-  makeMaze() {
-    this.gridTableComponent.maze();
-  }
-
-  clearBoard() {}
 }

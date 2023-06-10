@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Dijkstra } from '../scripts/algorithms/dijkstra';
+import { AStar } from '../scripts/algorithms/astar';
 import { RDMaze } from '../scripts/mazes/RDMaze';
 
 @Component({
@@ -10,13 +11,16 @@ import { RDMaze } from '../scripts/mazes/RDMaze';
   imports: [CommonModule],
   standalone: true,
 })
-export class GridTableComponent implements OnInit {
+export class GridTableComponent implements OnInit, AfterViewInit {
   columns: number[] = [];
   rows: number[] = [];
   nbColumns = 100;
   nbRow = 28;
   isPainting: boolean = false;
   isAlgorithmsDone: boolean = false;
+  startPoint = { row: 11, col: 40 };
+  finishPoint = { row: 14, col: 80 };
+  grid = this.getGrid();
 
   ngOnInit() {
     this.columns = Array.from(
@@ -26,6 +30,10 @@ export class GridTableComponent implements OnInit {
     this.rows = Array.from({ length: this.nbRow }, (_, index) => index + 1);
   }
 
+  ngAfterViewInit(): void {
+    this.placeStartFinishPoint();
+  }
+
   startPainting() {
     this.isPainting = true;
   }
@@ -33,7 +41,12 @@ export class GridTableComponent implements OnInit {
   paint(event: MouseEvent) {
     if (this.isPainting) {
       const element = event.target as HTMLElement;
-      if (element && element.tagName === 'TD') {
+      if (
+        element &&
+        element.tagName === 'TD' &&
+        !element.classList.contains('start') &&
+        !element.classList.contains('finish')
+      ) {
         element.classList.remove('path');
         element.classList.remove('unvisited');
         element.classList.add('wall');
@@ -46,32 +59,62 @@ export class GridTableComponent implements OnInit {
   }
 
   maze() {
+    this.clearBoard();
     const maze = new RDMaze(this.nbColumns, this.nbRow);
     maze.generate();
   }
 
-  algorithms(/*type: string*/) {
-    // Algorithms
-    const grid = this.getGrid();
-    const startNode = { row: 11, col: 40 };
-    const finishNode = { row: 0, col: 40 };
+  clearBoard() {
+    const cells = document.getElementsByClassName('cell');
+    for (let index = 0; index < cells.length; index++) {
+      cells[index].classList.remove('wall');
+      cells[index].classList.remove('path');
+      cells[index].classList.remove('visited');
+      cells[index].classList.add('unvisited');
+    }
+  }
 
-    const dijkstra = new Dijkstra(grid, startNode, finishNode);
-    const shortestPath = dijkstra.findShortestPath();
-    setTimeout((e: number) => {
-      this.paintShortestPath(shortestPath);
-    }, 500);
-    this.isAlgorithmsDone = true;
+  clearPath() {
+    const path = document.getElementsByClassName('path');
+    for (let index = 0; index < path.length; index++) {
+      path[index].classList.remove('path');
+      path[index--].classList.add('unvisited');
+    }
+  }
 
-    /*
+  algorithms(type: string) {
+    //const type: string = 'astar';
     switch (type) {
       case 'dijkstra':
-        
-
+        this.dijkstra();
+        break;
+      case 'astar':
+        this.astar();
         break;
       default:
         break;
-    }*/
+    }
+    this.isAlgorithmsDone = true;
+  }
+
+  dijkstra() {
+    const dijkstra = new Dijkstra(this.grid, this.startPoint, this.finishPoint);
+    const shortestDijPath = dijkstra.findShortestPath();
+    setTimeout((e: number) => {
+      this.paintShortestPath(shortestDijPath);
+    }, 500);
+  }
+
+  astar() {
+    const astar = new AStar(
+      this.grid,
+      [this.startPoint.row, this.startPoint.col],
+      [this.finishPoint.row, this.finishPoint.col]
+    );
+    const shortestAstarPath = astar.findPath();
+    setTimeout((e: number) => {
+      this.paintShortestPath(shortestAstarPath);
+    }, 500);
   }
 
   getGrid() {
@@ -97,19 +140,41 @@ export class GridTableComponent implements OnInit {
 
   paintShortestPath(shortestPath: number[]) {
     const paintedCells = document.getElementsByClassName('cell');
-
     let index = 0;
+
     function paintNextCell() {
+      const paintIndex = paintedCells[shortestPath[index]];
       if (index < shortestPath.length) {
-        paintedCells[shortestPath[index]].classList.remove('unvisited');
-        paintedCells[shortestPath[index]].classList.remove('visited');
-        paintedCells[shortestPath[index]].classList.add('path');
+        paintIndex.classList.remove('unvisited');
+        paintIndex.classList.remove('visited');
+        paintIndex.classList.add('path');
 
         index++;
-        setTimeout(paintNextCell, 50); // Delay of 1 second (1000 milliseconds)
+        setTimeout(paintNextCell, 50); // Delay of 1 second
       }
     }
 
     paintNextCell();
+  }
+
+  placeStartFinishPoint() {
+    this.placeStartPoint();
+    this.placeFinishPoint();
+  }
+
+  placeStartPoint() {
+    const startingCell = document.getElementById(
+      this.startPoint.row + '-' + this.startPoint.col
+    );
+    startingCell?.classList.remove('unvisited');
+    startingCell?.classList.add('start');
+  }
+
+  placeFinishPoint() {
+    const finishingCell = document.getElementById(
+      this.finishPoint.row + '-' + this.finishPoint.col
+    );
+    finishingCell?.classList.remove('unvisited');
+    finishingCell?.classList.add('finish');
   }
 }

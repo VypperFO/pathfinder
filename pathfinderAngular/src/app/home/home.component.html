@@ -1,10 +1,26 @@
 <nav>
   <ul>
     <li><h1>Pathfinder Visualizer</h1></li>
-    <li><p>Algorithms</p></li>
-    <li><button mat-raised-button>Visualize</button></li>
     <li>
-      <button mat-raised-button color="primary" (click)="clearBoard()">
+      <mat-form-field>
+        <mat-label>Select an algorithm</mat-label>
+        <mat-select [(value)]="selected">
+          <mat-option value="dijkstra">Dijkstra</mat-option>
+          <mat-option value="astar">A*</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </li>
+    <li>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="gridTableComponent.algorithms(this.selected)"
+      >
+        Visualize
+      </button>
+    </li>
+    <li>
+      <button mat-raised-button (click)="gridTableComponent.clearBoard()">
         Clear board
       </button>
     </li>
