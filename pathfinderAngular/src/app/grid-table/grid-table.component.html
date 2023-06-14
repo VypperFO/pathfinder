@@ -1,12 +1,15 @@
 <table (mousedown)="startPainting()" (mouseup)="stopPainting()">
-  <tbody>
-    <tr *ngFor="let row of rows">
+  <ng-container *ngFor="let row of rows; let rowIndex = index">
+    <tr>
       <td
-        *ngFor="let column of columns"
+        *ngFor="let column of columns; let columnIndex = index"
         class="cell unvisited"
         id="{{ row }}-{{ column }}"
-        (mouseover)="paint($event)"
+        [class.start]="isStartCell(rowIndex, columnIndex)"
+        [class.finish]="isFinishCell(rowIndex, columnIndex)"
+        (mouseenter)="paint($event, rowIndex, columnIndex)"
+        (mousemove)="moveCell($event, rowIndex, columnIndex)"
       ></td>
     </tr>
-  </tbody>
+  </ng-container>
 </table>

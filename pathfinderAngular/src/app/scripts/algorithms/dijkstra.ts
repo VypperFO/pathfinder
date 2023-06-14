@@ -92,6 +92,10 @@ export class Dijkstra {
 
     shortestPath.unshift(this.startNode);
 
+    if (distances[this.finishNode.row][this.finishNode.col] === Infinity) {
+      return [-1];
+    }
+
     const shortestPathIndexes: number[] = shortestPath.map(
       (node) => node.row * cols + node.col
     );

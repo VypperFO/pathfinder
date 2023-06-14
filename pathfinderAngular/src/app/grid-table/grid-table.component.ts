@@ -1,7 +1,9 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Dijkstra } from '../scripts/algorithms/dijkstra';
 import { AStar } from '../scripts/algorithms/astar';
+import { BFS } from '../scripts/algorithms/bfs';
+import { DFS } from '../scripts/algorithms/dfs';
 import { RDMaze } from '../scripts/mazes/RDMaze';
 
 @Component({
@@ -20,7 +22,8 @@ export class GridTableComponent implements OnInit, AfterViewInit {
   isAlgorithmsDone: boolean = false;
   startPoint = { row: 11, col: 40 };
   finishPoint = { row: 14, col: 80 };
-  grid = this.getGrid();
+  isStartCellSelected: boolean = false;
+  isFinishCellSelected: boolean = false;
 
   ngOnInit() {
     this.columns = Array.from(
@@ -37,25 +40,63 @@ export class GridTableComponent implements OnInit, AfterViewInit {
   startPainting() {
     this.isPainting = true;
   }
-
-  paint(event: MouseEvent) {
+  paint(event: MouseEvent, row: number, col: number) {
     if (this.isPainting) {
-      const element = event.target as HTMLElement;
-      if (
-        element &&
-        element.tagName === 'TD' &&
-        !element.classList.contains('start') &&
-        !element.classList.contains('finish')
-      ) {
-        element.classList.remove('path');
-        element.classList.remove('unvisited');
-        element.classList.add('wall');
+      if (this.isStartCellSelected) {
+        this.startPoint = { row, col };
+      } else if (this.isFinishCellSelected) {
+        this.finishPoint = { row, col };
+      } else {
+        const element = event.target as HTMLElement;
+        if (element && element.tagName === 'TD') {
+          element.classList.remove('path');
+          element.classList.remove('unvisited');
+          element.classList.add('wall');
+        }
       }
     }
   }
 
   stopPainting() {
     this.isPainting = false;
+  }
+
+  isStartCell(row: number, column: number) {
+    return row === this.startPoint.row && column === this.startPoint.col;
+  }
+
+  isFinishCell(row: number, column: number) {
+    return row === this.finishPoint.row && column === this.finishPoint.col;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 's') {
+      this.isStartCellSelected = true;
+      this.isFinishCellSelected = false;
+    } else if (event.key === 'f') {
+      this.isStartCellSelected = false;
+      this.isFinishCellSelected = true;
+    } else if (event.key === 'w') {
+      this.isStartCellSelected = false;
+      this.isFinishCellSelected = false;
+    } else {
+      console.log(this.startPoint);
+      console.log(this.finishPoint);
+    }
+  }
+
+  moveCell(event: MouseEvent, row: number, col: number) {
+    if (
+      (this.isStartCellSelected || this.isFinishCellSelected) &&
+      this.isPainting
+    ) {
+      if (this.isStartCellSelected) {
+        this.startPoint = { row, col };
+      } else if (this.isFinishCellSelected) {
+        this.startPoint = { row, col };
+      }
+    }
   }
 
   maze() {
@@ -91,6 +132,9 @@ export class GridTableComponent implements OnInit, AfterViewInit {
       case 'astar':
         this.astar();
         break;
+      case 'bfs':
+        this.bfs();
+        break;
       default:
         break;
     }
@@ -98,23 +142,46 @@ export class GridTableComponent implements OnInit, AfterViewInit {
   }
 
   dijkstra() {
-    const dijkstra = new Dijkstra(this.grid, this.startPoint, this.finishPoint);
+    const grid = this.getGrid();
+    const dijkstra = new Dijkstra(grid, this.startPoint, this.finishPoint);
     const shortestDijPath = dijkstra.findShortestPath();
-    setTimeout((e: number) => {
-      this.paintShortestPath(shortestDijPath);
-    }, 500);
+    if (shortestDijPath[0] === -1) {
+      console.log('no path found');
+    } else {
+      setTimeout((e: number) => {
+        this.paintShortestPath(shortestDijPath);
+      }, 500);
+    }
   }
 
   astar() {
+    const grid = this.getGrid();
     const astar = new AStar(
-      this.grid,
+      grid,
       [this.startPoint.row, this.startPoint.col],
       [this.finishPoint.row, this.finishPoint.col]
     );
     const shortestAstarPath = astar.findPath();
-    setTimeout((e: number) => {
-      this.paintShortestPath(shortestAstarPath);
-    }, 500);
+    if (shortestAstarPath[0] === -1) {
+      console.log('no path found');
+    } else {
+      setTimeout((e: number) => {
+        this.paintShortestPath(shortestAstarPath);
+      }, 500);
+    }
+  }
+
+  bfs() {
+    const grid = this.getGrid();
+    const bfs = new BFS(grid);
+    const shortestBFSPath = bfs.bfs(this.startPoint, this.finishPoint);
+    if (shortestBFSPath[0] === -1) {
+      console.log('no path found');
+    } else {
+      setTimeout((e: number) => {
+        this.paintShortestPath(shortestBFSPath);
+      }, 500);
+    }
   }
 
   getGrid() {
@@ -150,7 +217,7 @@ export class GridTableComponent implements OnInit, AfterViewInit {
         paintIndex.classList.add('path');
 
         index++;
-        setTimeout(paintNextCell, 50); // Delay of 1 second
+        setTimeout(paintNextCell, 50);
       }
     }
 

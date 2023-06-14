@@ -25,6 +25,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent {
-  selected = 'dijkstra';
+  selected = 'bfs';
   @ViewChild(GridTableComponent) gridTableComponent!: GridTableComponent;
 }
