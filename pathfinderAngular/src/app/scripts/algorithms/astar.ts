@@ -13,10 +13,6 @@ export class AStar {
     startNode: [number, number],
     finishNode: [number, number]
   ) {
-    startNode[0] = startNode[0] - 1;
-    startNode[1] = startNode[1] - 1;
-    finishNode[0] = finishNode[0] - 1;
-    finishNode[1] = finishNode[1] - 1;
     this.grid = grid;
     this.startNode = startNode;
     this.finishNode = finishNode;

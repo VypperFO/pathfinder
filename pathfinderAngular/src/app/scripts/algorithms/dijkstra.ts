@@ -9,10 +9,6 @@ export class Dijkstra {
   private finishNode: GridNode;
 
   constructor(grid: number[][], startNode: GridNode, finishNode: GridNode) {
-    startNode.row = startNode.row - 1;
-    startNode.col = startNode.col - 1;
-    finishNode.row = finishNode.row - 1;
-    finishNode.col = finishNode.col - 1;
     this.grid = grid;
     this.startNode = startNode;
     this.finishNode = finishNode;

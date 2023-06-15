@@ -13,17 +13,16 @@ import { RDMaze } from '../scripts/mazes/RDMaze';
   imports: [CommonModule],
   standalone: true,
 })
-export class GridTableComponent implements OnInit, AfterViewInit {
+export class GridTableComponent implements OnInit {
   columns: number[] = [];
   rows: number[] = [];
   nbColumns = 100;
   nbRow = 28;
   isPainting: boolean = false;
-  isAlgorithmsDone: boolean = false;
-  startPoint = { row: 11, col: 40 };
-  finishPoint = { row: 14, col: 80 };
   isStartCellSelected: boolean = false;
   isFinishCellSelected: boolean = false;
+  startPoint = { row: 11, col: 40 };
+  finishPoint = { row: 14, col: 80 };
 
   ngOnInit() {
     this.columns = Array.from(
@@ -33,32 +32,32 @@ export class GridTableComponent implements OnInit, AfterViewInit {
     this.rows = Array.from({ length: this.nbRow }, (_, index) => index + 1);
   }
 
-  ngAfterViewInit(): void {
-    this.placeStartFinishPoint();
-  }
-
   startPainting() {
     this.isPainting = true;
   }
+
   paint(event: MouseEvent, row: number, col: number) {
+    const element = event.target as HTMLElement;
+    if (element.classList.contains('start')) {
+      this.isStartCellSelected = true;
+      this.isFinishCellSelected = false;
+    }
+    if (element.classList.contains('finish')) {
+      this.isStartCellSelected = false;
+      this.isFinishCellSelected = true;
+    }
     if (this.isPainting) {
-      if (this.isStartCellSelected) {
-        this.startPoint = { row, col };
-      } else if (this.isFinishCellSelected) {
-        this.finishPoint = { row, col };
-      } else {
-        const element = event.target as HTMLElement;
-        if (element && element.tagName === 'TD') {
-          element.classList.remove('path');
-          element.classList.remove('unvisited');
-          element.classList.add('wall');
-        }
+      if (
+        element &&
+        element.tagName === 'TD' &&
+        !element.classList.contains('start') &&
+        !element.classList.contains('finish')
+      ) {
+        element.classList.remove('path');
+        element.classList.remove('unvisited');
+        element.classList.add('wall');
       }
     }
-  }
-
-  stopPainting() {
-    this.isPainting = false;
   }
 
   isStartCell(row: number, column: number) {
@@ -69,34 +68,36 @@ export class GridTableComponent implements OnInit, AfterViewInit {
     return row === this.finishPoint.row && column === this.finishPoint.col;
   }
 
-  @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.key === 's') {
-      this.isStartCellSelected = true;
-      this.isFinishCellSelected = false;
-    } else if (event.key === 'f') {
-      this.isStartCellSelected = false;
-      this.isFinishCellSelected = true;
-    } else if (event.key === 'w') {
-      this.isStartCellSelected = false;
-      this.isFinishCellSelected = false;
-    } else {
-      console.log(this.startPoint);
-      console.log(this.finishPoint);
-    }
-  }
-
   moveCell(event: MouseEvent, row: number, col: number) {
     if (
       (this.isStartCellSelected || this.isFinishCellSelected) &&
       this.isPainting
     ) {
+      const element = event.target as HTMLElement;
+      if (
+        element &&
+        element.tagName === 'TD' &&
+        !element.classList.contains('start') &&
+        !element.classList.contains('finish')
+      ) {
+        element.classList.remove('path');
+        element.classList.remove('wall');
+        element.classList.add('unvisited');
+      }
       if (this.isStartCellSelected) {
         this.startPoint = { row, col };
+        console.log('start');
       } else if (this.isFinishCellSelected) {
-        this.startPoint = { row, col };
+        this.finishPoint = { row, col };
+        console.log('finish');
       }
     }
+  }
+
+  stopPainting() {
+    this.isPainting = false;
+    this.isStartCellSelected = false;
+    this.isFinishCellSelected = false;
   }
 
   maze() {
@@ -124,7 +125,6 @@ export class GridTableComponent implements OnInit, AfterViewInit {
   }
 
   algorithms(type: string) {
-    //const type: string = 'astar';
     switch (type) {
       case 'dijkstra':
         this.dijkstra();
@@ -138,7 +138,6 @@ export class GridTableComponent implements OnInit, AfterViewInit {
       default:
         break;
     }
-    this.isAlgorithmsDone = true;
   }
 
   dijkstra() {
@@ -224,7 +223,7 @@ export class GridTableComponent implements OnInit, AfterViewInit {
     paintNextCell();
   }
 
-  placeStartFinishPoint() {
+  /* placeStartFinishPoint() {
     this.placeStartPoint();
     this.placeFinishPoint();
   }
@@ -243,5 +242,5 @@ export class GridTableComponent implements OnInit, AfterViewInit {
     );
     finishingCell?.classList.remove('unvisited');
     finishingCell?.classList.add('finish');
-  }
+  }*/
 }
