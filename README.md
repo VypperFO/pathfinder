@@ -36,8 +36,8 @@ DFS is an algorithm that explores as far as possible along each branch before ba
 ### Dijkstra's Algorithm
 Dijkstra's algorithm is similar to A*, but it does not use a heuristic function. Instead, it considers the cost of reaching each cell from the start cell and updates the cost as it explores the grid. It guarantees finding the shortest path.
 
-License
+## License
 This project is licensed under the MIT License.
 
-Acknowledgments
+## Acknowledgments
 This project was inspired by the pathfinding algorithms and visualization techniques found in various resources and tutorials. Special thanks to the open-source community for providing valuable libraries and tools.
