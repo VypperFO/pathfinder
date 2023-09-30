@@ -1,7 +1,7 @@
 # Pathfinder Visualizer
 This is a web application built with Angular that allows you to visualize various pathfinding algorithms. The supported algorithms include A* (A-star), Breadth-First Search (BFS), Depth-First Search (DFS), and Dijkstra's algorithm.
 
-![Screenshot 2023-09-30 115049](https://github.com/VypperFO/pathfinder/assets/30783599/fc96ff7d-bd33-4b89-8648-92d5a709fd85)
+![Screenshot 2023-09-30 115049](https://github.com/VypperFO/pathfinder/assets/30783599/fff54e9b-fa53-4ddd-a525-dd750003c4a0)
 
 ## Getting Started
 To get started with the Pathfinder Visualizer, follow the steps below:
